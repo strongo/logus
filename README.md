@@ -11,6 +11,11 @@ package foo
 import "context"
 import "github.com/strongo/logus"
 
+func init() {
+  logus.AddLogEntryHandler(logus.StandardGoLogger())
+  Bar(context.Background())
+}
+
 // Bar demonstrates how to use logus logger 
 func Bar(c context.Context) {
 
@@ -26,12 +31,6 @@ func Bar(c context.Context) {
   
 	logus.Logf(c, logus.SeverityError, "This is an error log message without trace ID")
 }
-
-func init() {
-	logus.AddLogEntryHandler(logus.StandardGoLogger())
-	Bar(context.Background())
-}
-
 ```
 
 ## Logus log entry handlers
