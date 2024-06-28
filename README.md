@@ -28,6 +28,7 @@ func Bar(c context.Context) {
 }
 
 func init() {
+	logus.AddLogEntryHandler(logus.StandardGoLogger())
 	Bar(context.Background())
 }
 
