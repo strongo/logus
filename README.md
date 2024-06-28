@@ -27,7 +27,7 @@ func Bar(c context.Context) {
 
 	const slotID = "456"
 	ct = logus.WithSlotID(ct, slotID)
-	logus.Warningf(ct, "This is a warning message with same trace ID and additional slotID=%s", slotID)
+	logus.Warningf(ct, "A warning with same trace ID and additional slotID=%s", slotID)
   
 	logus.Logf(c, logus.SeverityError, "This is an error log message without trace ID")
 }
