@@ -19,7 +19,7 @@ func init() {
 // Bar demonstrates how to use logus logger 
 func Bar(c context.Context) {
 
-	logus.Debugf(c, "This is a debug message without trance ID, unless it was set outside")
+	logus.Debugf(c, "This is a debug message without trace ID, unless it was set outside")
   
 	const traceID = "123"
 	ct := logus.WithTraceID(c, traceID)
