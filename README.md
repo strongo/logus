@@ -1,7 +1,7 @@
 # Package: [github.com/strongo/logus](https://github.com/strongo/logus)
 
 Package strongo/logus provides structured context aware logging for Go (golang)
-that supports grouping of log entries using trace and slot IDs.
+that supports grouping of log entries using trace and span IDs.
 
 ## Usage
 
@@ -25,9 +25,9 @@ func Bar(c context.Context) {
 	ct := logus.WithTraceID(c, traceID)
 	logus.Infof(ct, "This is an info message with a traceID=%s", traceID)
 
-	const slotID = "456"
-	ct = logus.WithSlotID(ct, slotID)
-	logus.Warningf(ct, "A warning with same trace ID and additional slotID=%s", slotID)
+	const spanID = "456"
+	ct = logus.WithSpanID(ct, spanID)
+	logus.Warningf(ct, "A warning with same trace ID and additional spanID=%s", spanID)
   
 	logus.Logf(c, logus.SeverityError, "This is an error log message without trace ID")
 }

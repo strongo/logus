@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-func TestGetSlotID(t *testing.T) {
-	const slotID = "slot123"
-	ctx := context.WithValue(context.Background(), &slotIDKey, slotID)
-	if got := GetSlotID(ctx); got != slotID {
-		t.Errorf("GetSlotID() = %s, want %s", got, slotID)
+func TestGetSpanID(t *testing.T) {
+	const spanID = "span123"
+	ctx := context.WithValue(context.Background(), &spanIDKey, spanID)
+	if got := GetSpanID(ctx); got != spanID {
+		t.Errorf("GetSpanID() = %s, want %s", got, spanID)
 	}
 }
 
@@ -32,13 +32,13 @@ func TestGetLabels(t *testing.T) {
 	}
 }
 
-func TestWithSlotID(t *testing.T) {
-	const slotID = "slot123"
-	ctx := WithSlotID(context.Background(), slotID)
-	if actual, ok := ctx.Value(&slotIDKey).(string); !ok {
-		t.Errorf("WithSlotID() = %T, want %T", slotID, slotID)
-	} else if actual != slotID {
-		t.Errorf("WithSlotID() = %v, want %s", actual, slotID)
+func TestWithSpanID(t *testing.T) {
+	const spanID = "span123"
+	ctx := WithSpanID(context.Background(), spanID)
+	if actual, ok := ctx.Value(&spanIDKey).(string); !ok {
+		t.Errorf("WithSpanID() = %T, want %T", spanID, spanID)
+	} else if actual != spanID {
+		t.Errorf("WithSpanID() = %v, want %s", actual, spanID)
 	}
 }
 

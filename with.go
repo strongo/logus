@@ -17,17 +17,17 @@ func GetTraceID(c context.Context) string {
 	return ""
 }
 
-var slotIDKey = "slotID"
+var spanIDKey = "spanID"
 
-// WithSlotID adds slot ID to context
-func WithSlotID(c context.Context, slotID string) context.Context {
-	return context.WithValue(c, &slotIDKey, slotID)
+// WithSpanID adds span ID to context
+func WithSpanID(c context.Context, spanID string) context.Context {
+	return context.WithValue(c, &spanIDKey, spanID)
 }
 
-// GetSlotID returns slot ID from context
-func GetSlotID(c context.Context) string {
-	if slotID, ok := c.Value(&slotIDKey).(string); ok {
-		return slotID
+// GetSpanID returns span ID from context
+func GetSpanID(c context.Context) string {
+	if spanID, ok := c.Value(&spanIDKey).(string); ok {
+		return spanID
 	}
 	return ""
 }
