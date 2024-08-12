@@ -5,6 +5,7 @@ import "context"
 // LogEntry hold data to be logged
 type LogEntry struct {
 	Severity      Severity
+	Component     string
 	MessageFormat string
 	MessageArgs   []any
 	Payload       any

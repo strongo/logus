@@ -2,38 +2,54 @@ package logus
 
 import (
 	"context"
+	"fmt"
+	"log"
+	"strings"
 	"testing"
 )
 
 func Test_goLogger_Log(t *testing.T) {
-	type args struct {
-		entry LogEntry
-	}
 	tests := []struct {
-		name string
-		args args
+		name     string
+		ctx      context.Context
+		arg      LogEntry
+		expected string
 	}{
-		{name: "debug", args: args{entry: LogEntry{Severity: SeverityDebug, MessageFormat: "debug message"}}},
-		{name: "info", args: args{entry: LogEntry{Severity: SeverityInfo, MessageFormat: "informational message"}}},
+		{
+			name:     "debug_nil_context",
+			ctx:      nil,
+			arg:      LogEntry{Severity: SeverityDebug, MessageFormat: "debugging message"},
+			expected: "DEBUG: debugging message",
+		},
+		{
+			name:     "info_with_component",
+			ctx:      context.Background(),
+			arg:      LogEntry{Severity: SeverityInfo, Component: "UnitTest", MessageFormat: "informational message"},
+			expected: "INFO: UnitTest: informational message"},
 	}
-	ctx := context.Background()
+	defer func() {
+		logPrintf = log.Printf
+	}()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := goLogger{}
-			err := s.Log(ctx, tt.args.entry)
+			var logPrintsCount int
+			var logString string
+			// Setup mocks
+			logPrintf = func(format string, v ...interface{}) {
+				logPrintsCount++
+				logString = fmt.Sprintf(format, v...)
+			}
+			s := NewStandardGoLogger()
+			err := s.Log(tt.ctx, tt.arg)
 			if err != nil {
 				t.Errorf("unexpected error: %v", err)
 			}
+			if logPrintsCount != 1 {
+				t.Errorf("expected 1 log print, got %d", logPrintsCount)
+			}
+			if !strings.Contains(logString, tt.expected) {
+				t.Errorf("expected log message to contain %q, got %q", tt.expected, logString)
+			}
 		})
-	}
-}
-
-func TestStandardGoLogger(t *testing.T) {
-	logEntryHandler := StandardGoLogger()
-	if logEntryHandler == nil {
-		t.Errorf("StandardGoLogger() = nil")
-	}
-	if _, ok := logEntryHandler.(LogEntryHandler); !ok {
-		t.Errorf("StandardGoLogger() expected %T, got %T", &goLogger{}, logEntryHandler)
 	}
 }

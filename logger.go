@@ -47,7 +47,7 @@ func (d *logger) Alertf(ctx context.Context, format string, args ...any) {
 func (d *logger) Log(ctx context.Context, entry LogEntry) {
 	for _, h := range d.handlers[:] {
 		if err := h.Log(ctx, entry); err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to log entry to log handler %T: %v", h, err)
+			_, _ = fmt.Fprintf(os.Stderr, "ERROR: failed to log arg to log handler %T: %v", h, err)
 		}
 	}
 }

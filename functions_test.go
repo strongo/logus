@@ -27,7 +27,7 @@ func setupTestHandler() (context.Context, *testLogEntryHandler) {
 func assertSingleLogEntry(t *testing.T, ctx context.Context, severity Severity, message string) {
 	testHandler := dispatcher.handlers[0].(*testLogEntryHandler)
 	if count := len(testHandler.entries); count != 1 {
-		t.Errorf("Expected 1 log entry, got %d", count)
+		t.Errorf("Expected 1 log arg, got %d", count)
 	}
 	logged := testHandler.entries[0]
 	if logged.logEntry.Severity != severity {
