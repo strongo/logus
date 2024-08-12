@@ -1,6 +1,6 @@
 package logus
 
-type Severity int
+type Severity uint8
 
 const (
 	SeverityDebug Severity = iota

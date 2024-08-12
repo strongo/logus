@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+func TestGetLogger(t *testing.T) {
+	l := GetLogger()
+	if l == nil {
+		t.Errorf("Expected logger, got nil")
+		return
+	}
+	ctx, _ := setupTestHandler()
+	const message = "TestGetLogger"
+	const severity = SeverityInfo
+	l.Log(ctx, LogEntry{Severity: severity, MessageFormat: message})
+	assertSingleLogEntry(t, ctx, severity, message)
+}
+
 func setupTestHandler() (context.Context, *testLogEntryHandler) {
 	testHandler := &testLogEntryHandler{}
 	dispatcher.handlers = []LogEntryHandler{testHandler}
@@ -23,8 +36,8 @@ func assertSingleLogEntry(t *testing.T, ctx context.Context, severity Severity, 
 	if logged.ctx != ctx {
 		t.Errorf("Expected context.Background(), got %v", logged.ctx)
 	}
-	if logged.logEntry.Message != message {
-		t.Errorf("Expected %s, got %s", message, logged.logEntry.Message)
+	if logged.logEntry.MessageFormat != message {
+		t.Errorf("Expected %s, got %s", message, logged.logEntry.MessageFormat)
 	}
 }
 
@@ -34,13 +47,13 @@ func TestLog(t *testing.T) {
 
 	// Perform
 	entry := LogEntry{
-		Severity: SeverityDebug,
-		Message:  "TestLog",
+		Severity:      SeverityDebug,
+		MessageFormat: "TestLog",
 	}
 	Log(ctx, entry)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityDebug, entry.Message)
+	assertSingleLogEntry(t, ctx, SeverityDebug, entry.MessageFormat)
 }
 
 func TestLogf(t *testing.T) {

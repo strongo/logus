@@ -5,8 +5,14 @@ import (
 	"fmt"
 )
 
+var dispatcher logger
+
+func GetLogger() Logger {
+	return &dispatcher
+}
+
 func AddLogEntryHandler(handler LogEntryHandler) {
-	dispatcher.AddLogEntryHandler(handler)
+	dispatcher.addLogEntryHandler(handler)
 }
 
 func Log(ctx context.Context, entry LogEntry) {
@@ -15,8 +21,8 @@ func Log(ctx context.Context, entry LogEntry) {
 
 func Logf(ctx context.Context, severity Severity, format string, args ...any) {
 	logEntry := LogEntry{
-		Severity: severity,
-		Message:  fmt.Sprintf(format, args...),
+		Severity:      severity,
+		MessageFormat: fmt.Sprintf(format, args...),
 	}
 	Log(ctx, logEntry)
 }

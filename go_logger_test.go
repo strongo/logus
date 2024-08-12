@@ -13,8 +13,8 @@ func Test_goLogger_Log(t *testing.T) {
 		name string
 		args args
 	}{
-		{name: "debug", args: args{entry: LogEntry{Severity: SeverityDebug, Message: "debug message"}}},
-		{name: "info", args: args{entry: LogEntry{Severity: SeverityInfo, Message: "informational message"}}},
+		{name: "debug", args: args{entry: LogEntry{Severity: SeverityDebug, MessageFormat: "debug message"}}},
+		{name: "info", args: args{entry: LogEntry{Severity: SeverityInfo, MessageFormat: "informational message"}}},
 	}
 	ctx := context.Background()
 	for _, tt := range tests {

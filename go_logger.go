@@ -26,7 +26,7 @@ func (s goLogger) Log(_ context.Context, entry LogEntry) error {
 	default:
 		severity = fmt.Sprintf("SEVERITY=%d", entry.Severity)
 	}
-	log.Printf("%s: %s", severity, entry.Message)
+	log.Printf("%s: %s", severity, entry.MessageFormat)
 	return nil
 }
 
