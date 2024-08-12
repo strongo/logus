@@ -18,6 +18,18 @@ func TestGetLogger(t *testing.T) {
 	assertSingleLogEntry(t, ctx, severity, message)
 }
 
+func TestGetSimpleLogger(t *testing.T) {
+	l := GetSimpleLogger()
+	if l == nil {
+		t.Errorf("Expected logger, got nil")
+		return
+	}
+	ctx, _ := setupTestHandler()
+	const message = "TestGetLogger"
+	l.Infof(ctx, message)
+	assertSingleLogEntry(t, ctx, SeverityInfo, message)
+}
+
 func setupTestHandler() (context.Context, *testLogEntryHandler) {
 	testHandler := &testLogEntryHandler{}
 	dispatcher.handlers = []LogEntryHandler{testHandler}

@@ -11,6 +11,10 @@ func GetLogger() Logger {
 	return &dispatcher
 }
 
+func GetSimpleLogger() SimpleLogger {
+	return &dispatcher
+}
+
 func AddLogEntryHandler(handler LogEntryHandler) {
 	dispatcher.addLogEntryHandler(handler)
 }
