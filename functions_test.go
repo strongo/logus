@@ -15,7 +15,7 @@ func TestGetLogger(t *testing.T) {
 	const message = "TestGetLogger"
 	const severity = SeverityInfo
 	l.Log(ctx, LogEntry{Severity: severity, MessageFormat: message})
-	assertSingleLogEntry(t, ctx, severity, message)
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: severity, MessageFormat: message})
 }
 
 func TestGetSimpleLogger(t *testing.T) {
@@ -27,7 +27,7 @@ func TestGetSimpleLogger(t *testing.T) {
 	ctx, _ := setupTestHandler()
 	const message = "TestGetLogger"
 	l.Infof(ctx, message)
-	assertSingleLogEntry(t, ctx, SeverityInfo, message)
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityInfo, MessageFormat: message})
 }
 
 func setupTestHandler() (context.Context, *testLogEntryHandler) {
@@ -36,20 +36,31 @@ func setupTestHandler() (context.Context, *testLogEntryHandler) {
 	return context.Background(), testHandler
 }
 
-func assertSingleLogEntry(t *testing.T, ctx context.Context, severity Severity, message string) {
+func assertSingleLogEntry(t *testing.T, ctx context.Context, expected LogEntry) {
 	testHandler := dispatcher.handlers[0].(*testLogEntryHandler)
 	if count := len(testHandler.entries); count != 1 {
 		t.Errorf("Expected 1 log arg, got %d", count)
 	}
-	logged := testHandler.entries[0]
-	if logged.logEntry.Severity != severity {
-		t.Errorf("Expected %v, got %v", severity, logged.logEntry.Severity)
+	actual := testHandler.entries[0]
+	if actual.logEntry.Severity != expected.Severity {
+		t.Errorf("Expected %v, got %v", expected.Severity, actual.logEntry.Severity)
+		return
 	}
-	if logged.ctx != ctx {
-		t.Errorf("Expected context.Background(), got %v", logged.ctx)
+	if actual.logEntry.MessageFormat != expected.MessageFormat {
+		t.Errorf("Expected %q, got %q", expected.MessageFormat, actual.logEntry.MessageFormat)
+		return
 	}
-	if logged.logEntry.MessageFormat != message {
-		t.Errorf("Expected %s, got %s", message, logged.logEntry.MessageFormat)
+	if len(actual.logEntry.MessageArgs) != len(expected.MessageArgs) {
+		t.Errorf("Expected len(MessageArgs)=%d, got %d", len(expected.MessageArgs), len(actual.logEntry.MessageArgs))
+		return
+	}
+	for i, expectedArg := range expected.MessageArgs {
+		if actual.logEntry.MessageArgs[i] != expectedArg {
+			t.Errorf("Expected MessageArgs[%d]=%v, got %v", i, expectedArg, actual.logEntry.MessageArgs[i])
+		}
+	}
+	if actual.ctx != ctx {
+		t.Errorf("Expected context does not match logged context")
 	}
 }
 
@@ -62,10 +73,12 @@ func TestLog(t *testing.T) {
 		Severity:      SeverityDebug,
 		MessageFormat: "TestLog",
 	}
+
+	expected := entry // Copy input
+
 	Log(ctx, entry)
 
-	// Assert
-	assertSingleLogEntry(t, ctx, SeverityDebug, entry.MessageFormat)
+	assertSingleLogEntry(t, ctx, expected)
 }
 
 func TestLogf(t *testing.T) {
@@ -78,7 +91,7 @@ func TestLogf(t *testing.T) {
 	Logf(ctx, severity, format, 101)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, severity, "v1=101")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: severity, MessageFormat: format, MessageArgs: []any{101}})
 }
 
 func TestAddLogEntryHandler(t *testing.T) {
@@ -106,7 +119,7 @@ func TestDebugf(t *testing.T) {
 	Debugf(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityDebug, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityDebug, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 
 func TestDefaultf(t *testing.T) {
@@ -117,7 +130,7 @@ func TestDefaultf(t *testing.T) {
 	Defaultf(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityDefault, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityDefault, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 
 func TestInfof(t *testing.T) {
@@ -128,7 +141,7 @@ func TestInfof(t *testing.T) {
 	Infof(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityInfo, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityInfo, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 
 func TestNoticef(t *testing.T) {
@@ -139,7 +152,7 @@ func TestNoticef(t *testing.T) {
 	Noticef(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityNotice, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityNotice, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 
 func TestWarningf(t *testing.T) {
@@ -150,7 +163,7 @@ func TestWarningf(t *testing.T) {
 	Warningf(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityWarning, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityWarning, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 func TestErrorf(t *testing.T) {
 	// Setup
@@ -160,7 +173,7 @@ func TestErrorf(t *testing.T) {
 	Errorf(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityError, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityError, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 
 func TestCriticalf(t *testing.T) {
@@ -171,7 +184,7 @@ func TestCriticalf(t *testing.T) {
 	Criticalf(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityCritical, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityCritical, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }
 
 func TestAlertf(t *testing.T) {
@@ -182,5 +195,5 @@ func TestAlertf(t *testing.T) {
 	Alertf(ctx, "v1=%v", 201)
 
 	// Assert
-	assertSingleLogEntry(t, ctx, SeverityAlert, "v1=201")
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityAlert, MessageFormat: "v1=%v", MessageArgs: []any{201}})
 }

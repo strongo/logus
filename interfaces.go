@@ -18,10 +18,13 @@ type Logger interface {
 
 type SimpleLogger interface {
 	Debugf(ctx context.Context, format string, args ...any)
+	Defaultf(ctx context.Context, format string, args ...any)
 	Infof(ctx context.Context, format string, args ...any)
+	Noticef(ctx context.Context, format string, args ...any)
 	Errorf(ctx context.Context, format string, args ...any)
 	Warningf(ctx context.Context, format string, args ...any)
 	Criticalf(ctx context.Context, format string, args ...any)
+	Alertf(ctx context.Context, format string, args ...any)
 }
 
 // LogEntryHandler should implement persistence of logs entries

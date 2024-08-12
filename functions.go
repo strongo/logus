@@ -2,7 +2,6 @@ package logus
 
 import (
 	"context"
-	"fmt"
 )
 
 var dispatcher logger
@@ -26,7 +25,8 @@ func Log(ctx context.Context, entry LogEntry) {
 func Logf(ctx context.Context, severity Severity, format string, args ...any) {
 	logEntry := LogEntry{
 		Severity:      severity,
-		MessageFormat: fmt.Sprintf(format, args...),
+		MessageFormat: format,
+		MessageArgs:   args,
 	}
 	Log(ctx, logEntry)
 }
