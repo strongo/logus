@@ -11,18 +11,13 @@ on:
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+  strongo_workflow:
+    permissions:
+      contents: write
+    uses: strongo/go-ci-action/.github/workflows/workflow.yml@main
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
+    secrets:
+      # This token is used to retrieve private repositories & to tag version
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      disable-version-bumping: false
