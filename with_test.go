@@ -58,9 +58,16 @@ func TestWithLabels(t *testing.T) {
 		"l2": "v2",
 	}
 	ctx := WithLabels(context.Background(), labels)
-	if actual, ok := ctx.Value(&labelsKey).(map[string]string); !ok {
-		t.Errorf("WithLabels() = %T, want %T", actual, labels)
-	} else if &actual != &actual {
-		t.Errorf("WithLabels() = %p, want %p", actual, labels)
+	actual, ok := ctx.Value(&labelsKey).(map[string]string)
+	if !ok {
+		t.Fatalf("WithLabels() = %T, want %T", actual, labels)
+	}
+	if len(actual) != len(labels) {
+		t.Fatalf("WithLabels() = %d, want %d", len(actual), len(labels))
+	}
+	for k, v := range labels {
+		if actual[k] != v {
+			t.Errorf("WithLabels()[%s] = %s, want %s", k, actual[k], v)
+		}
 	}
 }
