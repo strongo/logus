@@ -12,3 +12,14 @@ const (
 	SeverityCritical
 	SeverityAlert
 )
+
+var SeverityNames = []string{
+	"DEBUG",
+	"DEFAULT",
+	"INFO",
+	"NOTICE",
+	"WARNING",
+	"ERROR",
+	"CRITICAL",
+	"ALERT",
+}

@@ -6,35 +6,28 @@ import (
 	"log"
 )
 
+func NewStandardGoLogger() LogEntryHandler {
+	return goLogger{}
+}
+
+var logPrintf = log.Printf
+
+var _ LogEntryHandler = (*goLogger)(nil)
+
 type goLogger struct {
 }
 
 func (s goLogger) Log(_ context.Context, entry LogEntry) error {
 	var severity string
-	switch entry.Severity {
-	case SeverityDebug:
-		severity = "DEBUG"
-	case SeverityDefault:
-		severity = "DEFAULT"
-	case SeverityInfo:
-		severity = "INFO"
-	case SeverityNotice:
-		severity = "NOTICE"
-	case SeverityWarning:
-		severity = "WARNING"
-	case SeverityError:
-		severity = "ERROR"
-	case SeverityCritical:
-		severity = "CRITICAL"
-	case SeverityAlert:
-		severity = "ALERT"
-	default:
+	if int(entry.Severity) < len(SeverityNames) {
+		severity = SeverityNames[entry.Severity]
+	} else {
+		severity = fmt.Sprintf("SEVERITY%d", entry.Severity)
 		if entry.Component == "" {
-			log.Printf("WARNING: unknown log arg severity: %d", entry.Severity)
+			logPrintf("WARNING: unknown log arg severity: %d", entry.Severity)
 		} else {
-			log.Printf("WARNING: %s: unknown log arg severity: %d", entry.Component, entry.Severity)
+			logPrintf("WARNING: %s: unknown log arg severity: %d", entry.Component, entry.Severity)
 		}
-		severity = fmt.Sprintf("SEVERITY=%d", entry.Severity)
 	}
 	var message string
 	if len(entry.MessageArgs) == 0 {
@@ -45,15 +38,7 @@ func (s goLogger) Log(_ context.Context, entry LogEntry) error {
 	if entry.Component == "" {
 		logPrintf("%s: %s", severity, message)
 	} else {
-		logPrintf("%s: %s: %s", severity, entry.Component, message)
+		logPrintf("%s: Component=%s: %s", severity, entry.Component, message)
 	}
 	return nil
-}
-
-var logPrintf = log.Printf
-
-var _ LogEntryHandler = (*goLogger)(nil)
-
-func NewStandardGoLogger() LogEntryHandler {
-	return goLogger{}
 }
