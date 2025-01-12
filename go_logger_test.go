@@ -25,7 +25,7 @@ func Test_goLogger_Log(t *testing.T) {
 			name:     "info_with_component",
 			ctx:      context.Background(),
 			arg:      LogEntry{Severity: SeverityInfo, Component: "UnitTest", MessageFormat: "informational message"},
-			expected: "INFO: UnitTest: informational message"},
+			expected: "INFO: Component=UnitTest: informational message"},
 	}
 	defer func() {
 		logPrintf = log.Printf
