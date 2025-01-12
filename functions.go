@@ -14,8 +14,8 @@ func GetSimpleLogger() SimpleLogger {
 	return &dispatcher
 }
 
-func AddLogEntryHandler(handler LogEntryHandler) {
-	dispatcher.addLogEntryHandler(handler)
+func AddLogEntryHandler(logEntryHandler LogEntryHandler) {
+	dispatcher.addLogEntryHandler(logEntryHandler)
 }
 
 func Log(ctx context.Context, entry LogEntry) {

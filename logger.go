@@ -52,6 +52,14 @@ func (d *logger) Log(ctx context.Context, entry LogEntry) {
 	}
 }
 
-func (d *logger) addLogEntryHandler(handler LogEntryHandler) {
-	d.handlers = append(d.handlers, handler)
+func (d *logger) addLogEntryHandler(logEntryHandler LogEntryHandler) {
+	if logEntryHandler == nil {
+		panic("required parameter logEntryHandler is nil")
+	}
+	for i, h := range d.handlers {
+		if h == logEntryHandler {
+			panic(fmt.Sprintf("logEntryHandler %T already added at index %d", logEntryHandler, i))
+		}
+	}
+	d.handlers = append(d.handlers, logEntryHandler)
 }
