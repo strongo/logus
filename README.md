@@ -39,3 +39,8 @@ func Bar(c context.Context) {
 - [github.com/strongo/loguscloud](https://github.com/strongo/logusgcloud) - send log entries to Google Cloud Logging.
   Support grouping of log entries by request (using trace & span ID).
 
+
+
+## DataTug
+
+This project is enhanced with [DataTug](https://datatug.app). See the [datatug](./datatug) directory for details.
