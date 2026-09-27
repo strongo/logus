@@ -11,6 +11,9 @@ func TestGetSpanID(t *testing.T) {
 	if got := GetSpanID(ctx); got != spanID {
 		t.Errorf("GetSpanID() = %s, want %s", got, spanID)
 	}
+	if got := GetSpanID(context.Background()); got != "" {
+		t.Errorf("GetSpanID() = %s, want empty", got)
+	}
 }
 
 func TestGetTraceID(t *testing.T) {
@@ -19,6 +22,9 @@ func TestGetTraceID(t *testing.T) {
 	if got := GetTraceID(ctx); got != traceID {
 		t.Errorf("GetTraceID() = %s, want %s", got, traceID)
 	}
+	if got := GetTraceID(context.Background()); got != "" {
+		t.Errorf("GetTraceID() = %s, want empty", got)
+	}
 }
 
 func TestGetLabels(t *testing.T) {
@@ -26,9 +32,13 @@ func TestGetLabels(t *testing.T) {
 		"l1": "v1",
 		"l2": "v2",
 	}
-	ctx := context.WithValue(context.Background(), &traceIDKey, labels)
-	if got := GetLabels(ctx); &got == &labels {
-		t.Errorf("GetTraceID() = %p, want %p", got, labels)
+	ctx := WithLabels(context.Background(), labels)
+	got := GetLabels(ctx)
+	if len(got) != 2 || got["l1"] != "v1" || got["l2"] != "v2" {
+		t.Errorf("GetLabels() = %v, want %v", got, labels)
+	}
+	if gotEmpty := GetLabels(context.Background()); gotEmpty != nil {
+		t.Errorf("GetLabels() = %v, want nil", gotEmpty)
 	}
 }
 

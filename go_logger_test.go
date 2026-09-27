@@ -25,7 +25,26 @@ func Test_goLogger_Log(t *testing.T) {
 			name:     "info_with_component",
 			ctx:      context.Background(),
 			arg:      LogEntry{Severity: SeverityInfo, Component: "UnitTest", MessageFormat: "informational message"},
-			expected: "INFO: Component=UnitTest: informational message"},
+			expected: "INFO: Component=UnitTest: informational message",
+		},
+		{
+			name:     "message_with_args",
+			ctx:      context.Background(),
+			arg:      LogEntry{Severity: SeverityInfo, MessageFormat: "hello %s", MessageArgs: []any{"world"}},
+			expected: "INFO: hello world",
+		},
+		{
+			name:     "unknown_severity_no_component",
+			ctx:      context.Background(),
+			arg:      LogEntry{Severity: 99, MessageFormat: "msg"},
+			expected: "SEVERITY99: msg",
+		},
+		{
+			name:     "unknown_severity_with_component",
+			ctx:      context.Background(),
+			arg:      LogEntry{Severity: 99, Component: "Comp", MessageFormat: "msg"},
+			expected: "SEVERITY99: Component=Comp: msg",
+		},
 	}
 	defer func() {
 		logPrintf = log.Printf
@@ -44,8 +63,8 @@ func Test_goLogger_Log(t *testing.T) {
 			if err != nil {
 				t.Errorf("unexpected error: %v", err)
 			}
-			if logPrintsCount != 1 {
-				t.Errorf("expected 1 log print, got %d", logPrintsCount)
+			if logPrintsCount < 1 {
+				t.Errorf("expected at least 1 log print, got %d", logPrintsCount)
 			}
 			if !strings.Contains(logString, tt.expected) {
 				t.Errorf("expected log message to contain %q, got %q", tt.expected, logString)

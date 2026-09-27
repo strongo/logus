@@ -11,6 +11,9 @@ func TestNewComponentLogger(t *testing.T) {
 
 	const message = "test message"
 	logger.Log(ctx, LogEntry{Severity: SeverityInfo, MessageFormat: message})
-	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityInfo, MessageFormat: message})
-	testLogHandler.entries[0].logEntry.Component = component
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityInfo, MessageFormat: message, Component: component})
+
+	testLogHandler.entries = nil
+	logger.Log(ctx, LogEntry{Severity: SeverityInfo, MessageFormat: message, Component: "sub"})
+	assertSingleLogEntry(t, ctx, LogEntry{Severity: SeverityInfo, MessageFormat: message, Component: component + ".sub"})
 }
